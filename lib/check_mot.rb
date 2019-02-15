@@ -1,5 +1,10 @@
-require "check_mot/version"
-require "check_mot/configuration"
+require 'date'
+require 'active_support/core_ext/time'
+
+require 'check_mot/version'
+require 'check_mot/configuration'
+require 'check_mot/attribute'
+require 'check_mot/date_attribute'
 
 module CheckMot
   class Error < StandardError; end
