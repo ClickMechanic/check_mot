@@ -1,11 +1,13 @@
 require 'date'
 require 'active_support/core_ext/time'
+require 'json'
 
 require 'check_mot/version'
 require 'check_mot/configuration'
 require 'check_mot/attribute'
 require 'check_mot/date_attribute'
 require 'check_mot/resource'
+require 'check_mot/response'
 
 module CheckMot
   class Error < StandardError; end
