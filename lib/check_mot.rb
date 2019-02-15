@@ -5,6 +5,7 @@ require 'check_mot/version'
 require 'check_mot/configuration'
 require 'check_mot/attribute'
 require 'check_mot/date_attribute'
+require 'check_mot/resource'
 
 module CheckMot
   class Error < StandardError; end
