@@ -1,5 +1,6 @@
 require "bundler/setup"
 require "check_mot"
+require 'securerandom'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
