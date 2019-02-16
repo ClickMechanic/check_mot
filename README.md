@@ -4,6 +4,26 @@
 
 Ruby implementation of UK Government [MOT History API](https://www.check-mot.service.gov.uk/mot-history-api). 
 
+From the official API documentation:
+> The MOT history API gives authorised third-party organisations a way to access MOT test history information for vehicles.
+>  
+>  The information includes:
+>  
+>  - MOT test date
+>  - MOT expiry date
+>  - test result
+>  - mileage reading
+>  - MOT test number
+>  - reasons for failure and advisory notices
+>  - first MOT due date for new vehicles
+>  - vehicle ID
+>  - vehicle registration date
+>  - vehicle manufacturing date
+>  - cylinder capacity of the engine
+>
+> To access API you will need an API key that uniquely identifies the source of the request. DVSA will give you an API key if it approves your application.
+
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -22,7 +42,33 @@ Or install it yourself as:
 
 ## Usage
 
-TODO
+Require the dependency in your project:
+
+```ruby
+require 'check_mot'
+```
+
+Configure your API key:
+```ruby
+CheckMot.configure do |config|
+  config.api_key = <your_api_key>
+end
+```
+
+The gem uses Faraday under the hood.  To optionally configure the HTTP adapter for Faraday, add the following to your `CheckMot` config:
+```ruby
+config.http_adapter = <your_http_adapter>
+```
+
+To check a vehicle's MOT history using the registration number:
+```ruby
+check_mot = CheckMot::Client.new
+result = check_mot.by_vehicle_registration('AB01CDF')
+
+result.registration # => "AB01CFD"
+result.mot_tests.first.completed_date # => 2019-02-16 21:40:00
+# etc
+```
 
 ## Development
 
