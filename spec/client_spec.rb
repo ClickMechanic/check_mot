@@ -5,12 +5,38 @@ RSpec.describe CheckMot::Client do
   let(:http_response) { double :http_response, body: response_body, status: status, success?: success }
   let(:connection) { double :connection }
   let(:api_key) { SecureRandom.urlsafe_base64(16) }
-  let(:configuration) { double(:config, api_key: api_key) }
+  let(:configuration) { double(:config, api_key: api_key, http_adapter: nil) }
   let(:client) { described_class.new }
 
   subject { client }
 
   before { allow(CheckMot).to receive(:configuration).and_return(configuration) }
+
+  describe '#by_vehicle_registration' do
+    let(:registration) { 'ABC123' }
+
+    subject { client.by_vehicle_registration(registration) }
+
+    before do
+      allow(connection).to receive(:get).and_return(http_response)
+      allow(Faraday).to receive(:new).and_return(connection)
+    end
+
+    it 'calls get with the correct params' do
+      expect(client).to receive(:get).with(registration: registration).and_call_original
+      subject
+    end
+
+    it 'returns a Resource containing the first record from the response' do
+      response = CheckMot::Response.new(http_response)
+      expect(client).to receive(:get).with(registration: registration).and_return(response)
+
+      resource = double(:resource)
+      expect(CheckMot::Resource).to receive(:new).with(response.sanitized.first).and_return resource
+
+      expect(subject).to be resource
+    end
+  end
 
   describe 'connection' do
     subject { client.send(:connection) }
@@ -40,21 +66,18 @@ RSpec.describe CheckMot::Client do
   describe '#get' do
     let(:params) { {registration: 'ABC123'} }
 
-    subject { client.get(params) }
+    subject { client.send(:get, params) }
 
     before do
       allow(connection).to receive(:get).and_return(http_response)
       allow(Faraday).to receive(:new).and_return(connection)
     end
 
-    it 'returns a resource from the sanitized response' do
-      response = CheckMot::Response.new(http_response)
+    it 'returns a Response' do
+      response = double(:response, success?: true)
       expect(CheckMot::Response).to receive(:new).with(http_response).and_return(response)
 
-      resource = double(:resource)
-      expect(CheckMot::Resource).to receive(:new).with(response.sanitized).and_return(resource)
-
-      expect(subject).to be resource
+      expect(subject).to be response
     end
 
     context 'when the response is not successful' do

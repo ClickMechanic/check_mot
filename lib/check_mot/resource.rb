@@ -14,6 +14,11 @@ module CheckMot
       resolved_attribute(name)
     end
 
+    def inspect
+      # prevents extraneous output in the console:
+      to_s
+    end
+
     private
 
     attr_reader :source_hash

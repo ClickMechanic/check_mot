@@ -1,13 +1,18 @@
 module CheckMot
 
   class Client
-    def get(params)
-      response = Response.new(connection.get path, params)
-      fail ResponseError.new(response.status, response.raw) unless response.success?
-      Resource.new(response.sanitized)
+    def by_vehicle_registration(registration)
+      response = get(registration: registration)
+      Resource.new(response.sanitized.first)
     end
 
     private
+
+    def get(params)
+      Response.new(connection.get path, params).tap do |response|
+        fail ResponseError.new(response.status, response.raw) unless response.success?
+      end
+    end
 
     def url
       'https://beta.check-mot.service.gov.uk'
