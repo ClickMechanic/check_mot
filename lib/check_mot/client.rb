@@ -29,7 +29,7 @@ module CheckMot
     def create_connection
       fail Error.new('api_key not configured') unless CheckMot.configuration.api_key
 
-      Faraday.new(:url => url) do |builder|
+      Faraday.new(url: url) do |builder|
         builder.headers = headers
         builder.adapter CheckMot.configuration.http_adapter || Faraday.default_adapter
       end

@@ -7,7 +7,7 @@ module CheckMot
     TIME_REGEX = /^\d{4}.\d{2}.\d{2} \d{2}:\d{2}:\d{2}$/
 
     def self.try(name, value)
-      return unless name.to_s.match(/_date$/)
+      return unless name.to_s.match(ATTRIBUTE_REGEX)
 
       new(value)
     end

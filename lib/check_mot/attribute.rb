@@ -8,8 +8,8 @@ module CheckMot
     end
 
     def self.resolve(name, value)
-      [DateAttribute].lazy.map do |attr|
-        attr.try(name, value)
+      [DateAttribute].map do |attribute|
+        attribute.try(name, value)
       end.first || value
     end
   end

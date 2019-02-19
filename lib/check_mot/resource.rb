@@ -24,7 +24,7 @@ module CheckMot
     attr_reader :source_hash
 
     def resolved_attribute(name)
-      resolved_attributes[name] ||= resolve_attribute(name, @source_hash[name])
+      resolved_attributes[name] ||= resolve_attribute(name, source_hash[name])
     end
 
     def resolved_attributes
@@ -32,15 +32,15 @@ module CheckMot
     end
 
     def resolve_attribute(name, value)
-      attr = Attribute.resolve(name, value)
+      attribute = Attribute.resolve(name, value)
 
-      case attr
+      case attribute
       when Array
-        attr.map { |value| resolve_attribute(name, value) }
+        attribute.map { |value| resolve_attribute(name, value) }
       when Hash
-        Resource.new(attr)
+        Resource.new(attribute)
       when Attribute
-        attr.value
+        attribute.value
       else
         value
       end
