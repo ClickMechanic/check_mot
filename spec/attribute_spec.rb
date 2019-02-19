@@ -9,7 +9,7 @@ RSpec.describe CheckMot::Attribute do
     context 'for date attributes' do
       it 'returns a DateAttribute' do
         result = double :result
-        expect(CheckMot::DateAttribute).to receive(:new).with(name, value).and_return(result)
+        expect(CheckMot::DateAttribute).to receive(:new).with(value).and_return(result)
         expect(subject).to be result
       end
     end

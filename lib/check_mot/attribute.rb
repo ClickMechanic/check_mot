@@ -3,8 +3,8 @@ module CheckMot
   class Attribute
     attr_reader :value
 
-    def initialize(name, value)
-      @name, @value = name, value
+    def initialize(value)
+      @value = value
     end
 
     def self.resolve(name, value)

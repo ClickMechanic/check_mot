@@ -9,7 +9,7 @@ module CheckMot
     def self.try(name, value)
       return unless name.to_s.match(/_date$/)
 
-      new(name, value)
+      new(value)
     end
 
     def value
