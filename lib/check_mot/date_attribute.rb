@@ -3,8 +3,8 @@ module CheckMot
   class DateAttribute < Attribute
 
     ATTRIBUTE_REGEX = /_date$/
-    DATE_REGEX = /^\d{4}.\d{2}.\d{2}$/
-    TIME_REGEX = /^\d{4}.\d{2}.\d{2} \d{2}:\d{2}:\d{2}$/
+    DATE_REGEX = /^\d{4}[.-\/]\d{2}[.-\/]\d{2}$/
+    TIME_REGEX = /^\d{4}[.-\/]\d{2}[.-\/]\d{2} \d{2}:\d{2}:\d{2}$/
 
     def self.try(name, value)
       return unless name.to_s.match(ATTRIBUTE_REGEX)
