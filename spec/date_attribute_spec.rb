@@ -1,8 +1,7 @@
 RSpec.describe CheckMot::DateAttribute do
-  let(:name) { :test_date }
   let(:value) { 'some value' }
 
-  let(:attribute) { described_class.new(name, value) }
+  let(:attribute) { described_class.new(value) }
 
   describe '#value' do
     subject { attribute.value }
@@ -33,6 +32,7 @@ RSpec.describe CheckMot::DateAttribute do
   end
 
   describe '.try' do
+    let(:name) { :test_date }
     subject { described_class.try(name, value) }
 
     context 'for date attributes' do
