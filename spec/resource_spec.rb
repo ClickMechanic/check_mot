@@ -1,21 +1,26 @@
 RSpec.describe CheckMot::Resource do
-  let(:source_hash) { { test1: 'some value', method2: rand(100) } }
+  let(:source_hash) { {test1: 'some value', method2: rand(100)} }
   let(:resource) { described_class.new(source_hash) }
 
   subject { resource }
 
   it { is_expected.to respond_to(:test1) }
   it { is_expected.to respond_to(:method2) }
-  it { is_expected.not_to respond_to(:method3) }
+  it { is_expected.to respond_to(:method3) }
 
   it 'provides method implementations for given hash' do
     expect(subject.test1).to eq 'some value'
     expect(subject.method2).to eq source_hash[:method2]
-    expect { subject.method3 }.to raise_error(NoMethodError)
+  end
+
+  context 'when hash key is missing' do
+    it 'does not error' do
+      expect(subject.method3).to be_nil
+    end
   end
 
   describe 'Hash attributes' do
-    let(:source_hash) { { hash_attr: { test2: 'some value', method3: rand(100) } } }
+    let(:source_hash) { {hash_attr: {test2: 'some value', method3: rand(100)}} }
     subject { resource.hash_attr }
 
     specify 'are resolved into Resource instances' do
@@ -26,7 +31,7 @@ RSpec.describe CheckMot::Resource do
   end
 
   describe 'Array attributes' do
-    let(:source_hash) { { array_attr: [rand(100), Object.new, 'some value', { test2: 'some value', method3: rand(100) }] } }
+    let(:source_hash) { {array_attr: [rand(100), Object.new, 'some value', {test2: 'some value', method3: rand(100)}]} }
     subject { resource.array_attr }
 
     specify 'normal members are resolved to themselves' do
@@ -48,7 +53,7 @@ RSpec.describe CheckMot::Resource do
 
   describe 'Date attributes' do
     let(:date) { Date.today + rand(100) }
-    let(:source_hash) { { unformatted_date: 'some date', formatted_date: date.strftime('%Y.%m.%d') } }
+    let(:source_hash) { {unformatted_date: 'some date', formatted_date: date.strftime('%Y.%m.%d')} }
 
     specify 'are resolved into dates' do
       expect(subject.unformatted_date).to eq 'some date'
@@ -58,7 +63,7 @@ RSpec.describe CheckMot::Resource do
 
   describe 'Time attributes' do
     let(:time) { Time.now.change(usec: 0) }
-    let(:source_hash) { { unformatted_date: 'some time', formatted_date: time.strftime('%Y.%m.%d %H:%M:%S') } }
+    let(:source_hash) { {unformatted_date: 'some time', formatted_date: time.strftime('%Y.%m.%d %H:%M:%S')} }
 
     specify 'are resolved into times' do
       expect(subject.unformatted_date).to eq 'some time'

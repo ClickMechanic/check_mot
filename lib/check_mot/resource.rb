@@ -6,11 +6,10 @@ module CheckMot
     end
 
     def respond_to_missing?(name, include_private = false)
-      super || source_hash.keys.include?(name)
+      true
     end
 
     def method_missing(name, *args)
-      super unless source_hash.keys.include?(name)
       resolved_attribute(name)
     end
 
