@@ -1,5 +1,4 @@
 RSpec.describe CheckMot::Client do
-  let(:response_body) { File.read(File.expand_path('../fixtures/registration.json', __FILE__)) }
   let(:status) { 200 }
   let(:success) { true }
   let(:http_response) { double :http_response, body: response_body, status: status, success?: success }
@@ -13,6 +12,7 @@ RSpec.describe CheckMot::Client do
   before { allow(CheckMot).to receive(:configuration).and_return(configuration) }
 
   describe '#by_vehicle_registration' do
+    let(:response_body) { File.read(File.expand_path('../fixtures/registration.json', __FILE__)) }
     let(:registration) { 'ABC123' }
 
     subject { client.by_vehicle_registration(registration) }
@@ -38,7 +38,37 @@ RSpec.describe CheckMot::Client do
     end
   end
 
-  describe 'connection' do
+  describe '#by_date' do
+    let(:response_body) { File.read(File.expand_path('../fixtures/date.json', __FILE__)) }
+    let(:date) { '20240101' }
+    let(:page) { 1 }
+
+    subject { client.by_date(date, page: page) }
+
+    before do
+      allow(connection).to receive(:get).and_return(http_response)
+      allow(Faraday).to receive(:new).and_return(connection)
+    end
+
+    it 'calls get with the correct params' do
+      expect(client).to receive(:get).with(date: date, page: page).and_call_original
+      subject
+    end
+
+    it 'returns an array of Resources containing the response data' do
+      response = CheckMot::Response.new(http_response)
+      expect(client).to receive(:get).with(date: date, page: page).and_return(response)
+
+      resource_1 = double(:resource_1)
+      resource_2 = double(:resource_2)
+      expect(CheckMot::Resource).to receive(:new).with(response.sanitized[0]).and_return resource_1
+      expect(CheckMot::Resource).to receive(:new).with(response.sanitized[1]).and_return resource_2
+
+      expect(subject).to contain_exactly resource_1, resource_2
+    end
+  end
+
+  describe '#connection' do
     subject { client.send(:connection) }
 
     it 'initializes a Faraday object with the api url' do
@@ -64,6 +94,7 @@ RSpec.describe CheckMot::Client do
   end
 
   describe '#get' do
+    let(:response_body) { '{}' }
     let(:params) { {registration: 'ABC123'} }
 
     subject { client.send(:get, params) }

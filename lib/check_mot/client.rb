@@ -6,6 +6,11 @@ module CheckMot
       Resource.new(response.sanitized.first)
     end
 
+    def by_date(date, page:)
+      response = get(date: date, page: page)
+      response.sanitized.map { |source_hash| Resource.new(source_hash) }
+    end
+
     private
 
     def get(params)
