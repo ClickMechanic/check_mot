@@ -35,6 +35,15 @@ RSpec.describe CheckMot::Client do
 
       expect(subject).to be resource
     end
+
+    context 'when the response is a 404' do
+      let(:response_body) { File.read(File.expand_path('../fixtures/404_vrm.json', __FILE__)) }
+      let(:status) { 404 }
+
+      it 'returns nil' do
+        expect(subject).to be nil
+      end
+    end
   end
 
   describe '#by_date' do
@@ -67,7 +76,7 @@ RSpec.describe CheckMot::Client do
     end
 
     context 'when the response is a 404' do
-      let(:response_body) { File.read(File.expand_path('../fixtures/empty_page.json', __FILE__)) }
+      let(:response_body) { File.read(File.expand_path('../fixtures/404_empty_page.json', __FILE__)) }
       let(:status) { 404 }
 
       it 'returns an empty array' do

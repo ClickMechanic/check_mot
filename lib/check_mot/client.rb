@@ -3,12 +3,14 @@ module CheckMot
   class Client
     def by_vehicle_registration(registration)
       response = get(registration: registration)
-      Resource.new(response.sanitized.first)
+      return nil if response.status == 404
+
+      Resource.new(response.sanitized&.first)
     end
 
     def by_date(date, page:)
       response = get(date: date, page: page)
-      return [] if response.not_found?
+      return [] if response.status == 404
 
       response.sanitized.map { |source_hash| Resource.new(source_hash) }
     end
