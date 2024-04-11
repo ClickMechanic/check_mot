@@ -1,7 +1,6 @@
 RSpec.describe CheckMot::Client do
   let(:status) { 200 }
-  let(:success) { true }
-  let(:http_response) { double :http_response, body: response_body, status: status, success?: success }
+  let(:http_response) { double :http_response, body: response_body, status: status, success?: status == 200, not_found?: status == 404}
   let(:connection) { double :connection }
   let(:api_key) { SecureRandom.urlsafe_base64(16) }
   let(:configuration) { double(:config, api_key: api_key, http_adapter: nil) }
@@ -42,6 +41,7 @@ RSpec.describe CheckMot::Client do
     let(:response_body) { File.read(File.expand_path('../fixtures/date.json', __FILE__)) }
     let(:date) { '20240101' }
     let(:page) { 1 }
+    let(:response) { CheckMot::Response.new(http_response) }
 
     subject { client.by_date(date, page: page) }
 
@@ -56,7 +56,6 @@ RSpec.describe CheckMot::Client do
     end
 
     it 'returns an array of Resources containing the response data' do
-      response = CheckMot::Response.new(http_response)
       expect(client).to receive(:get).with(date: date, page: page).and_return(response)
 
       resource_1 = double(:resource_1)
@@ -65,6 +64,15 @@ RSpec.describe CheckMot::Client do
       expect(CheckMot::Resource).to receive(:new).with(response.sanitized[1]).and_return resource_2
 
       expect(subject).to contain_exactly resource_1, resource_2
+    end
+
+    context 'when the response is a 404' do
+      let(:response_body) { File.read(File.expand_path('../fixtures/empty_page.json', __FILE__)) }
+      let(:status) { 404 }
+
+      it 'returns an empty array' do
+        expect(subject).to match_array([])
+      end
     end
   end
 
@@ -113,7 +121,7 @@ RSpec.describe CheckMot::Client do
 
     context 'when the response is not successful' do
       let(:status) { 400 }
-      let(:success) { false }
+      let(:success?) { false }
       let(:response_body) { 'This is an error' }
 
       it 'raises a ResponseError' do

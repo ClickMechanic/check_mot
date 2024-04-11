@@ -8,6 +8,8 @@ module CheckMot
 
     def by_date(date, page:)
       response = get(date: date, page: page)
+      return [] if response.not_found?
+
       response.sanitized.map { |source_hash| Resource.new(source_hash) }
     end
 
@@ -15,8 +17,12 @@ module CheckMot
 
     def get(params)
       Response.new(connection.get path, params).tap do |response|
-        fail ResponseError.new(response.status, response.raw) unless response.success?
+        fail ResponseError.new(response.status, response.raw) unless valid_response?(response)
       end
+    end
+
+    def valid_response?(response)
+      response.success? || response.not_found?
     end
 
     def url
