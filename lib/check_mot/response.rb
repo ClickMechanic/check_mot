@@ -5,7 +5,7 @@ module CheckMot
       @raw_response = raw_response
     end
 
-    delegate :success?, :not_found?, :status, to: :raw_response
+    delegate :success?, :status, to: :raw_response
 
 
     def sanitized

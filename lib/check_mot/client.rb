@@ -22,7 +22,7 @@ module CheckMot
     end
 
     def valid_response?(response)
-      response.success? || response.not_found?
+      response.success? || response.status == 404
     end
 
     def url
