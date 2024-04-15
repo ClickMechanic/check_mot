@@ -7,7 +7,6 @@ module CheckMot
 
     delegate :success?, :status, to: :raw_response
 
-
     def sanitized
       return unless success?
 
@@ -21,6 +20,10 @@ module CheckMot
 
     def raw
       raw_response.body
+    end
+
+    def validate
+      fail ResponseError.new(status, raw) unless success?
     end
 
     private

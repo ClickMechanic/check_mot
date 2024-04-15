@@ -3,7 +3,7 @@ module CheckMot
   class Client
     def by_vehicle_registration(registration)
       response = get(registration: registration)
-      fail_on_error(response)
+      response.validate
 
       Resource.new(response.sanitized&.first)
     end
@@ -12,16 +12,12 @@ module CheckMot
       response = get(date: date, page: page)
       return [] if response.status == 404
 
-      fail_on_error(response)
+      response.validate
 
       response.sanitized.map { |source_hash| Resource.new(source_hash) }
     end
 
     private
-
-    def fail_on_error(response)
-      fail ResponseError.new(response.status, response.raw) unless response.success?
-    end
 
     def get(params)
       Response.new(connection.get path, params)
