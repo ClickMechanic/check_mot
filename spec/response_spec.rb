@@ -38,28 +38,4 @@ RSpec.describe CheckMot::Response do
       expect(subject.raw).to eq raw_response.body
     end
   end
-
-  describe 'sanitized' do
-    subject { response.sanitized }
-
-    it 'returns an array of hashes with keys transformed with underscores and symbolized' do
-      expected = [{
-          camel_case_key: 'some value',
-          parent_key: {
-              child_node: body_hash["parentKey"]["childNode"],
-              sibling_child: {
-                  grandchild_node: 'a test attribute'
-              }
-          }
-      }]
-
-      expect(subject).to eq expected
-    end
-
-    context 'when the raw response is not successful' do
-      let(:success) { false }
-
-      it { is_expected.to be_nil }
-    end
-  end
 end

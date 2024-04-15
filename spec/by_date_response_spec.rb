@@ -10,12 +10,7 @@ RSpec.describe CheckMot::ByDateResponse do
     subject { unit.resources }
 
     it 'returns an array of Resources containing the response data' do
-      resource_1 = double(:resource_1)
-      resource_2 = double(:resource_2)
-      expect(CheckMot::Resource).to receive(:new).with(unit.sanitized[0]).and_return resource_1
-      expect(CheckMot::Resource).to receive(:new).with(unit.sanitized[1]).and_return resource_2
-
-      expect(subject).to contain_exactly resource_1, resource_2
+      expect(subject.map(&:registration)).to contain_exactly 'YC15ZTE', 'F5TMB'
     end
 
     context 'when the response is not successful' do

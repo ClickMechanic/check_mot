@@ -9,5 +9,9 @@ module CheckMot
 
       sanitized.map { |source_hash| Resource.new(source_hash) }
     end
+
+    def sanitized
+      parsed_response.map(&method(:transform))
+    end
   end
 end
