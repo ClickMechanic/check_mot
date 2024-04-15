@@ -36,12 +36,16 @@ RSpec.describe CheckMot::Client do
       expect(subject).to be resource
     end
 
-    context 'when the response is a 404' do
-      let(:response_body) { File.read(File.expand_path('../fixtures/404_vrm.json', __FILE__)) }
-      let(:status) { 404 }
+    context 'when the response is non-successful code' do
+      let(:success?) { false }
+      let(:status) { [400, 403, 404, 415, 429, 500, 503, 504].sample }
+      let(:response_body) { 'This is an error' }
 
-      it 'returns nil' do
-        expect(subject).to be nil
+      it 'raises a ResponseError' do
+        expect { subject }.to raise_error(CheckMot::ResponseError) do |e|
+          expect(e.message).to eq response_body
+          expect(e.status).to eq status
+        end
       end
     end
   end
@@ -75,12 +79,26 @@ RSpec.describe CheckMot::Client do
       expect(subject).to contain_exactly resource_1, resource_2
     end
 
-    context 'when the response is a 404' do
-      let(:response_body) { File.read(File.expand_path('../fixtures/404_empty_page.json', __FILE__)) }
-      let(:status) { 404 }
+    context 'when the response is not successful' do
+      let(:success?) { false }
 
-      it 'returns an empty array' do
-        expect(subject).to match_array([])
+      context 'when the response is a 404' do
+        let(:status) { 404 }
+        let(:response_body) { File.read(File.expand_path('../fixtures/404_vrm.json', __FILE__)) }
+
+        it { is_expected.to match_array [] }
+      end
+
+      context 'when the response is non-successful code other than 404' do
+        let(:status) { [400, 403, 415, 429, 500, 503, 504].sample }
+        let(:response_body) { 'This is an error' }
+
+        it 'raises a ResponseError' do
+          expect { subject }.to raise_error(CheckMot::ResponseError) do |e|
+            expect(e.message).to eq response_body
+            expect(e.status).to eq status
+          end
+        end
       end
     end
   end
@@ -126,19 +144,6 @@ RSpec.describe CheckMot::Client do
       expect(CheckMot::Response).to receive(:new).with(http_response).and_return(response)
 
       expect(subject).to be response
-    end
-
-    context 'when the response is not successful' do
-      let(:status) { 400 }
-      let(:success?) { false }
-      let(:response_body) { 'This is an error' }
-
-      it 'raises a ResponseError' do
-        expect { subject }.to raise_error(CheckMot::ResponseError) do |e|
-          expect(e.message).to eq response_body
-          expect(e.status).to eq status
-        end
-      end
     end
 
     it 'passes the path in the call' do
