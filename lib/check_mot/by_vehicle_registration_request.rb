@@ -3,7 +3,8 @@
 module CheckMot
   class ByVehicleRegistrationRequest < Request
     def get(registration)
-      response = super(registration: registration)
+      raw_response = get_raw(registration: registration)
+      response = Response.new(raw_response)
       response.validate
       Resource.new(response.sanitized&.first)
     end

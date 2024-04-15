@@ -32,35 +32,23 @@ RSpec.describe CheckMot::Request do
     end
   end
 
-  describe '#get' do
+  describe '#get_raw' do
     let(:response_body) { '{}' }
     let(:status) { 200 }
     let(:http_response) { double :http_response, body: response_body, status: status, success?: status == 200, not_found?: status == 404}
     let(:connection) { double :connection }
     let(:params) { {registration: 'ABC123'} }
 
-    subject { request.get(params) }
+    subject { request.get_raw(params) }
 
     before do
       allow(connection).to receive(:get).and_return(http_response)
       allow(Faraday).to receive(:new).and_return(connection)
     end
 
-    it 'returns a Response' do
-      response = double(:response, success?: true)
-      expect(CheckMot::Response).to receive(:new).with(http_response).and_return(response)
-
-      expect(subject).to be response
-    end
-
     it 'passes the path in the call' do
       expect(connection).to receive(:get).with('/trade/vehicles/mot-tests', anything).and_return(http_response)
-      subject
-    end
-
-    it 'passes the params in the call' do
-      expect(connection).to receive(:get).with(anything, params).and_return(http_response)
-      subject
+      expect(subject).to be(http_response)
     end
   end
 end

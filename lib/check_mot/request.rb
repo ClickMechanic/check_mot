@@ -5,8 +5,8 @@ module CheckMot
     URL = 'https://beta.check-mot.service.gov.uk'
     PATH = '/trade/vehicles/mot-tests'
 
-    def get(params)
-      Response.new(connection.get PATH, params)
+    def get_raw(params)
+      connection.get PATH, params
     end
 
     private

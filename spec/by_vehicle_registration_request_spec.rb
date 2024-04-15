@@ -13,19 +13,24 @@ RSpec.describe CheckMot::ByVehicleRegistrationRequest do
     let(:response_body) { File.read(File.expand_path('../fixtures/registration.json', __FILE__)) }
     let(:registration) { 'ABC123' }
 
+    let(:resource_content) { double(:resource_content) }
+    let(:response) { instance_double(CheckMot::Response, validate: nil, sanitized: [resource_content]) }
+    let(:resource) { instance_double(CheckMot::Resource) }
+
     subject { unit.get(registration) }
 
     before do
-      allow(connection).to receive(:get).and_return(http_response)
+      allow(connection).to receive(:get_raw).and_return(http_response)
+      allow_any_instance_of(CheckMot::Request).to receive(:get_raw).with(registration: registration).and_return(http_response)
+
       allow(Faraday).to receive(:new).and_return(connection)
+      allow(CheckMot::Response).to receive(:new).and_return(response)
+      allow(CheckMot::Resource).to receive(:new).with(resource_content).and_return(resource)
     end
 
     it 'returns a Resource containing the first record from the response' do
-      response = CheckMot::Response.new(http_response)
-      allow_any_instance_of(CheckMot::Request).to receive(:get).with(registration: registration).and_return(response)
-
       resource = double(:resource)
-      expect(CheckMot::Resource).to receive(:new).with(response.sanitized.first).and_return resource
+      expect(CheckMot::Resource).to receive(:new).with(resource_content).and_return resource
 
       expect(subject).to be resource
     end
@@ -34,6 +39,8 @@ RSpec.describe CheckMot::ByVehicleRegistrationRequest do
       let(:success?) { false }
       let(:status) { [400, 403, 404, 415, 429, 500, 503, 504].sample }
       let(:response_body) { 'This is an error' }
+
+      before { allow(response).to receive(:validate).and_raise CheckMot::ResponseError.new(status, 'This is an error') }
 
       it 'raises a ResponseError' do
         expect { subject }.to raise_error(CheckMot::ResponseError) do |e|
