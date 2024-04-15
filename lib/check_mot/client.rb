@@ -19,12 +19,8 @@ module CheckMot
 
     def get(params)
       Response.new(connection.get path, params).tap do |response|
-        fail ResponseError.new(response.status, response.raw) unless valid_response?(response)
+        fail ResponseError.new(response.status, response.raw) unless response.success? || response.status == 404
       end
-    end
-
-    def valid_response?(response)
-      response.success? || response.status == 404
     end
 
     def url
