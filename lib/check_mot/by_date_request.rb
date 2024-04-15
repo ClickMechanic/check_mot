@@ -4,7 +4,7 @@ module CheckMot
   class ByDateRequest < Request
     def get(date, page:)
       raw_response = get_raw(date: date, page: page)
-      response = Response.new(raw_response)
+      response = ByDateResponse.new(raw_response)
       return [] if response.status == 404
 
       response.validate
