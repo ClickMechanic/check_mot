@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    check_mot (0.2.0)
+    check_mot (0.3.0)
       activesupport (>= 4.0)
       faraday (>= 0.9)
 
