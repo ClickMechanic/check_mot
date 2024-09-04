@@ -70,6 +70,15 @@ result.mot_tests.first.completed_date # => 2019-02-16 21:40:00
 # etc
 ```
 
+To request MOT tests completed on 15 August 2024 for page 1:
+```ruby
+check_mot = CheckMot::Client.new
+result = check_mot.by_date('20240815', page: 1)
+result.first.mot_tests.first.test_result # => "PASSED"
+# etc
+```
+Note: `page` is between 1 and 1440 inclusive. Dates that are over 5 weeks before the current date will produce a 400 error.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
