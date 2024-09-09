@@ -6,8 +6,8 @@ require "check_mot/version"
 Gem::Specification.new do |spec|
   spec.name          = "check_mot"
   spec.version       = CheckMot::VERSION
-  spec.authors       = ["Ben Forrest"]
-  spec.email         = ["ben@clickmechanic.com"]
+  spec.authors       = ["Ben Forrest", "clickmechanic-dev"]
+  spec.email         = "dev@clickmechanic.com"
 
   spec.summary       = 'Ruby interface for the UK MOT History API'
   spec.description   = 'See https://www.check-mot.service.gov.uk/mot-history-api for details of the API spec'
